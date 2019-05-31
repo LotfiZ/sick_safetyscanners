@@ -25,44 +25,64 @@
 
 //----------------------------------------------------------------------
 /*!
- * \file ParseMeasurementCurrentConfigData.cpp
+ * \file ConfigData.cpp
  *
  * \author  Lennart Puck <puck@fzi.de>
- * \date    2018-10-16
+ * \date    2019-02-25
  */
 //----------------------------------------------------------------------
 
-#include <sick_safetyscanners/data_processing/ParseMeasurementCurrentConfigData.h>
-
-#include <sick_safetyscanners/cola2/Command.h>
+#include <sick_safetyscanners/datastructure/ConfigData.h>
 
 namespace sick {
-namespace data_processing {
+namespace datastructure {
 
-ParseMeasurementCurrentConfigData::ParseMeasurementCurrentConfigData()
+ConfigData::ConfigData() {}
+
+float ConfigData::getStartAngle() const
 {
-  m_reader_ptr = std::make_shared<sick::data_processing::ReadWriteHelper>();
+  return m_start_angle;
 }
 
-
-bool ParseMeasurementCurrentConfigData::parseTCPSequence(
-  const datastructure::PacketBuffer& buffer, datastructure::ConfigData& config_data) const
+void ConfigData::setStartAngle(const int32_t& start_angle)
 {
-  const uint8_t* data_ptr(buffer.getBuffer().data());
-  config_data.setStartAngle(readStartAngle(data_ptr));
-  config_data.setAngularBeamResolution(readAngularBeamResolution(data_ptr));
-  return true;
+  m_start_angle = (float)start_angle / ANGLE_RESOLUTION;
 }
 
-uint32_t ParseMeasurementCurrentConfigData::readStartAngle(const uint8_t* data_ptr) const
+void ConfigData::setStartAngleDegrees(const float& start_angle)
 {
-  return m_reader_ptr->readuint32_tLittleEndian(data_ptr, 36);
+  m_start_angle = start_angle;
 }
 
-uint32_t ParseMeasurementCurrentConfigData::readAngularBeamResolution(const uint8_t* data_ptr) const
+float ConfigData::getEndAngle() const
 {
-  return m_reader_ptr->readuint32_tLittleEndian(data_ptr, 40);
+  return m_end_angle;
 }
 
-} // namespace data_processing
+void ConfigData::setEndAngle(const int32_t& end_angle)
+{
+  m_end_angle = (float)end_angle / ANGLE_RESOLUTION;
+}
+
+void ConfigData::setEndAngleDegrees(const float& end_angle)
+{
+  m_end_angle = end_angle;
+}
+
+float ConfigData::getAngularBeamResolution() const
+{
+  return m_angular_beam_resolution;
+}
+
+void ConfigData::setAngularBeamResolution(const int32_t& angular_beam_resolution)
+{
+  m_angular_beam_resolution = (float)angular_beam_resolution / ANGLE_RESOLUTION;
+}
+
+void ConfigData::setAngularBeamResolutionDegrees(const float& angular_beam_resolution)
+{
+  m_angular_beam_resolution = angular_beam_resolution;
+}
+
+} // namespace datastructure
 } // namespace sick
